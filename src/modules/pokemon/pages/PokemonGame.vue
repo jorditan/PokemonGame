@@ -1,6 +1,6 @@
 <template>
   <section>
-    <MyModal />
+    <MyModal :dificults="[Dificulty.easy, Dificulty.medium, Dificulty.hard]" />
   </section>
 
   <section
@@ -44,7 +44,7 @@ h1 {
 
 <script setup lang="ts">
 import MyModal from '../components/MyModal.vue'
-import { GameStatus } from '../interfaces'
+import { Dificulty, GameStatus } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
 const { gameStatus, isLoading, winner, pokemonsOptions, checkAnswer, resetGame } = usePokemonGame()
 import PokemonOptions from '../components/PokemonOptions.vue'
