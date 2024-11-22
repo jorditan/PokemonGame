@@ -2,20 +2,36 @@ import { computed, onMounted, ref } from 'vue'
 import { GameStatus, type Pokemon, type PokemonListResponse } from '../interfaces'
 import pokemonApi from '../api/pokemonApi'
 import confeti from 'canvas-confetti'
+import { Dificulty } from '../interfaces'
 
 export const usePokemonGame = () => {
   const gameStatus = ref<GameStatus>(GameStatus.playing)
   const pokemons = ref<Pokemon[]>([])
   const pokemonsOptions = ref<Pokemon[]>([])
+  const limitPokemons = ref<number>(10)
+  const dificult = ref<Dificulty>(Dificulty.unselected)
+
+  const setDificult = async (dificulty: Dificulty = Dificulty.easy) => {
+    dificult.value = dificulty
+    if (dificult.value == Dificulty.easy) {
+      limitPokemons.value = 151
+    } else if (dificult.value == Dificulty.medium) {
+      limitPokemons.value = 200
+    } else if (dificult.value == Dificulty.hard) {
+      limitPokemons.value = 300
+    }
+  }
 
   const winner = computed(
     () => pokemonsOptions.value[Math.floor(Math.random() * pokemonsOptions.value.length)],
   )
+
   const isLoading = computed(() => pokemons.value.length == 0)
+  // const hasDificult = computed(() => dificult.value != undefined)
 
   const getPokemonsIds = async (): Promise<Pokemon[]> => {
-    const response = await pokemonApi.get<PokemonListResponse>('/?limit=151')
-
+    const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons.value}`)
+    await setDificult()
     const pokemonsArray = response.data.results.map((pokemon) => {
       const urlParts = pokemon.url.split('/')
       const id = urlParts.at(-2) ?? 0
@@ -24,7 +40,6 @@ export const usePokemonGame = () => {
         id: +id,
       }
     })
-
     return pokemonsArray.sort(() => Math.random() - 0.5)
   }
 
@@ -58,17 +73,21 @@ export const usePokemonGame = () => {
 
   onMounted(async () => {
     // await new Promise((r) => setTimeout(r, 1000))
+    limitPokemons.value = 19
     pokemons.value = await getPokemonsIds()
-    getNextOptions()
+    getNextOptions(limitPokemons.value)
   })
 
   return {
+    limitPokemons,
     gameStatus,
     isLoading,
     pokemonsOptions,
     winner,
+    dificult,
 
     // Methods
+    setDificult,
     getNextOptions,
     checkAnswer,
     resetGame,

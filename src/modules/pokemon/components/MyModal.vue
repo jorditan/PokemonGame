@@ -13,30 +13,41 @@
     >
     <div class="flex gap-5 flex-row">
       <div v-for="dificult in dificults" :key="dificult">
-        <RadioButton :dificult="dificult" />
+        <RadioButton @click="setDificult" :dificult="dificult" />
       </div>
     </div>
     <div class="flex gap-2 pt-6 justify-end">
-      <Button
-        disabled
-        class="bg-blue-500 text-[#28282]"
+      <button
+        :class="[
+          {
+            enabled: dificult != 'Por definir',
+            disabled: dificult == 'Por definir',
+          },
+        ]"
         type="button"
-        label="Confirmar"
         severity="info"
-        @click="visible = true"
-      ></Button>
+        @click="dificult !== 'Por definir' && handleVisible()"
+        class="p-2 rounded-lg mt-2"
+      >
+        Confirmar
+      </button>
     </div>
   </Dialog>
 </template>
 
 <script setup lang="ts">
 import RadioButton from './RadioButton.vue'
-import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
 import type { Dificulty } from '../interfaces'
+import { usePokemonGame } from '../composables/usePokemonGame'
 
+const { dificult, setDificult } = usePokemonGame()
 const visible = ref(true)
+
+const handleVisible = () => {
+  visible.value = !visible.value
+}
 
 interface Props {
   dificults: Dificulty[]
@@ -45,4 +56,20 @@ interface Props {
 defineProps<Props>()
 </script>
 
-<style scoped></style>
+<style scoped>
+.disabled {
+  border: none;
+  color: #c0c0c0;
+  background-color: #999999;
+  cursor: not-allowed;
+  @apply disabled:opacity-75;
+}
+
+.enabled {
+  cursor: pointer;
+  background-color: #1d4ed8;
+}
+.enabled:hover {
+  background-color: #0231b3;
+}
+</style>
