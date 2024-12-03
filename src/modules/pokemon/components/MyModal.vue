@@ -26,7 +26,7 @@
         ]"
         type="button"
         severity="info"
-        @click="dificult !== 'Por definir' && handleVisible()"
+        @click="dificult !== 'Por definir' && handleVisible(), (hasStart = true)"
         class="p-2 rounded-lg mt-2"
       >
         Confirmar
@@ -42,7 +42,7 @@ import { ref } from 'vue'
 import type { Dificulty } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
 
-const { dificult, setDificult } = usePokemonGame()
+const { dificult, setDificult, hasStart } = usePokemonGame()
 const visible = ref(true)
 
 const handleVisible = () => {

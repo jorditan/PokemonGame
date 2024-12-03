@@ -8,8 +8,9 @@ export const usePokemonGame = () => {
   const gameStatus = ref<GameStatus>(GameStatus.playing)
   const pokemons = ref<Pokemon[]>([])
   const pokemonsOptions = ref<Pokemon[]>([])
-  const limitPokemons = ref<number>(10)
+  const limitPokemons = ref<number>(0)
   const dificult = ref<Dificulty>(Dificulty.unselected)
+  const hasStart = ref(false)
 
   const setDificult = async (dificulty: Dificulty = Dificulty.easy) => {
     dificult.value = dificulty
@@ -20,6 +21,7 @@ export const usePokemonGame = () => {
     } else if (dificult.value == Dificulty.hard) {
       limitPokemons.value = 300
     }
+    console.log(limitPokemons.value)
   }
 
   const winner = computed(
@@ -31,7 +33,6 @@ export const usePokemonGame = () => {
 
   const getPokemonsIds = async (): Promise<Pokemon[]> => {
     const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons.value}`)
-    await setDificult()
     const pokemonsArray = response.data.results.map((pokemon) => {
       const urlParts = pokemon.url.split('/')
       const id = urlParts.at(-2) ?? 0
@@ -73,7 +74,7 @@ export const usePokemonGame = () => {
 
   onMounted(async () => {
     // await new Promise((r) => setTimeout(r, 1000))
-    limitPokemons.value = 19
+    await setDificult()
     pokemons.value = await getPokemonsIds()
     getNextOptions(limitPokemons.value)
   })
@@ -85,6 +86,7 @@ export const usePokemonGame = () => {
     pokemonsOptions,
     winner,
     dificult,
+    hasStart,
 
     // Methods
     setDificult,
