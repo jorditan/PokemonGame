@@ -10,16 +10,15 @@ export const usePokemonGame = () => {
   const pokemonsOptions = ref<Pokemon[]>([])
   const limitPokemons = ref<number>(0)
   const dificult = ref<Dificulty>(Dificulty.unselected)
-  const hasStart = ref(false)
 
   const setDificult = async (dificulty: Dificulty = Dificulty.easy) => {
     dificult.value = dificulty
     if (dificult.value == Dificulty.easy) {
       limitPokemons.value = 151
     } else if (dificult.value == Dificulty.medium) {
-      limitPokemons.value = 200
+      limitPokemons.value = 201
     } else if (dificult.value == Dificulty.hard) {
-      limitPokemons.value = 300
+      limitPokemons.value = 301
     }
   }
 
@@ -39,16 +38,7 @@ export const usePokemonGame = () => {
         id: +id,
       }
     })
-    console.log(pokemonsArray.sort(() => Math.random() - 0.5))
     return pokemonsArray.sort(() => Math.random() - 0.5)
-  }
-
-  const getNextOptions = async (howMany: number = 4) => {
-    gameStatus.value = GameStatus.playing
-    pokemonsOptions.value = pokemons.value.slice(0, howMany)
-    console.log('Total pokemons:', pokemons.value)
-    console.log('Opciones:', pokemonsOptions.value)
-    pokemons.value = pokemons.value.slice(howMany)
   }
 
   const checkAnswer = (id: number) => {
@@ -67,17 +57,20 @@ export const usePokemonGame = () => {
     return hasWon
   }
 
+  const getNextOptions = async (howMany: number = 4) => {
+    pokemonsOptions.value = pokemons.value.slice(0, howMany)
+    pokemons.value = pokemons.value.slice(howMany)
+  }
+
   const startGame = async () => {
-    console.log('Ganador', winner.value)
     pokemons.value = await getPokemonsIds()
     await getNextOptions()
-    console.log('Límite pokeones', limitPokemons.value)
-    console.log('Estatus:', gameStatus.value)
-    console.log('Ganador', winner.value.name)
+    gameStatus.value = GameStatus.playing
+    console.log('Ganador: ', winner.value.name)
+    console.log('Estado: ', gameStatus.value)
   }
 
   const resetGame = async () => {
-    hasStart.value = false
     pokemons.value = await getPokemonsIds()
     getNextOptions()
     gameStatus.value = GameStatus.playing
@@ -90,7 +83,6 @@ export const usePokemonGame = () => {
     pokemonsOptions,
     winner,
     dificult,
-    hasStart,
 
     // Methods
     setDificult,

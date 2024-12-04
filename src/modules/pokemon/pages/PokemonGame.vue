@@ -51,10 +51,7 @@ import PokemonOptions from '../components/PokemonOptions.vue'
 import PokemonPicture from '../components/PokemonPicture.vue'
 import { watch } from 'vue'
 
-watch(
-  () => winner.value,
-  (newWinner) => {
-    console.log(newWinner, 'Is the new winner')
-  },
-)
+watch(isLoading, (newState) => {
+  console.log('Que el juego está cargando es:', newState)
+})
 </script>
