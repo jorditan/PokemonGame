@@ -9,7 +9,7 @@
     :style="{ width: '25rem' }"
   >
     <span class="text-surface-500 dark:text-surface-400 block mb-8"
-      >El juego tiene 3 dificultades distintas. Selecciona alguna para poder comenzar:</span
+      >El juego tiene 3 dificultades distintas. Selecciona alguna para poder empezar:</span
     >
     <div class="flex gap-5 flex-row">
       <div v-for="dificult in dificults" :key="dificult">
@@ -26,7 +26,7 @@
         ]"
         type="button"
         severity="info"
-        @click="dificult !== 'Por definir' && handleVisible(), (hasStart = true)"
+        @click="dificult !== 'Por definir' && handleVisible(), (hasStart = true), startGame()"
         class="p-2 rounded-lg mt-2"
       >
         Confirmar
@@ -42,7 +42,7 @@ import { ref } from 'vue'
 import type { Dificulty } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
 
-const { dificult, setDificult, hasStart } = usePokemonGame()
+const { dificult, setDificult, hasStart, startGame } = usePokemonGame()
 const visible = ref(true)
 
 const handleVisible = () => {

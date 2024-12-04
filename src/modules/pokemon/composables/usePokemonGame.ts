@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { GameStatus, type Pokemon, type PokemonListResponse } from '../interfaces'
 import pokemonApi from '../api/pokemonApi'
 import confeti from 'canvas-confetti'
@@ -21,7 +21,6 @@ export const usePokemonGame = () => {
     } else if (dificult.value == Dificulty.hard) {
       limitPokemons.value = 300
     }
-    console.log(limitPokemons.value)
   }
 
   const winner = computed(
@@ -29,7 +28,6 @@ export const usePokemonGame = () => {
   )
 
   const isLoading = computed(() => pokemons.value.length == 0)
-  // const hasDificult = computed(() => dificult.value != undefined)
 
   const getPokemonsIds = async (): Promise<Pokemon[]> => {
     const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons.value}`)
@@ -41,12 +39,15 @@ export const usePokemonGame = () => {
         id: +id,
       }
     })
+    console.log(pokemonsArray.sort(() => Math.random() - 0.5))
     return pokemonsArray.sort(() => Math.random() - 0.5)
   }
 
-  const getNextOptions = (howMany: number = 4) => {
+  const getNextOptions = async (howMany: number = 4) => {
     gameStatus.value = GameStatus.playing
     pokemonsOptions.value = pokemons.value.slice(0, howMany)
+    console.log('Total pokemons:', pokemons.value)
+    console.log('Opciones:', pokemonsOptions.value)
     pokemons.value = pokemons.value.slice(howMany)
   }
 
@@ -66,18 +67,21 @@ export const usePokemonGame = () => {
     return hasWon
   }
 
+  const startGame = async () => {
+    console.log('Ganador', winner.value)
+    pokemons.value = await getPokemonsIds()
+    await getNextOptions()
+    console.log('Límite pokeones', limitPokemons.value)
+    console.log('Estatus:', gameStatus.value)
+    console.log('Ganador', winner.value.name)
+  }
+
   const resetGame = async () => {
+    hasStart.value = false
     pokemons.value = await getPokemonsIds()
     getNextOptions()
     gameStatus.value = GameStatus.playing
   }
-
-  onMounted(async () => {
-    // await new Promise((r) => setTimeout(r, 1000))
-    await setDificult()
-    pokemons.value = await getPokemonsIds()
-    getNextOptions(limitPokemons.value)
-  })
 
   return {
     limitPokemons,
@@ -93,5 +97,6 @@ export const usePokemonGame = () => {
     getNextOptions,
     checkAnswer,
     resetGame,
+    startGame,
   }
 }
