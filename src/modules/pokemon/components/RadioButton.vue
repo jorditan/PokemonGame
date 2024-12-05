@@ -1,5 +1,5 @@
 <template>
-  <div @click="$emit('click', dificult)" class="flex items-center gap-2 justify-center">
+  <div @click="$emit('click', dificult, 'click')" class="flex items-center gap-2 justify-center">
     <RadioButton :inputId="dificult" name="dificulty" :value="dificult" />
     <label for="easy">{{ dificult }}</label>
   </div>

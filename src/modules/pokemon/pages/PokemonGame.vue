@@ -4,7 +4,7 @@
   </section>
 
   <section
-    v-if="gameStatus == GameStatus.loading || winner.id == null"
+    v-if="store.gameStatus == GameStatus.loading"
     class="flex flex-col justify-center items-center w-screen h-screen"
   >
     <h1 class="text-3xl">Espere por favor</h1>
@@ -13,18 +13,21 @@
 
   <section v-else class="gap-10 flex flex-col justify-center items-center w-screen h-screen">
     <h1 class="text-5xl font-bold text-slate-800">¿Quién es este pokemon?</h1>
-    <h3 class="capitalize text-2xl font-bold">{{ gameStatus }}</h3>
-    <PokemonPicture :poekmon-id="winner.id" :show-pokemon="gameStatus != GameStatus.playing" />
+    <h3 class="capitalize text-2xl font-bold">{{ store.gameStatus }}</h3>
+    <PokemonPicture
+      :poekmon-id="store.winner!.id"
+      :show-pokemon="store.gameStatus == GameStatus.won"
+    />
     <PokemonOptions
-      :options="pokemonsOptions"
-      :blockSelection="gameStatus != GameStatus.playing"
-      :correckAnswer="winner.id"
+      :options="store.pokemonsOptions"
+      :blockSelection="store.gameStatus != GameStatus.playing"
+      :correckAnswer="store.winner!.id"
       @selected-options="checkAnswer"
     />
     <button
-      @click="resetGame"
+      @click="store.restartGame"
       class="w-[400px] fixed bottom-5 left-50 right-50 rounded-lg bg-blue-900 hover:shadow-md m-2 p-4 text-[#fafafa]"
-      v-if="gameStatus == GameStatus.lost || gameStatus == GameStatus.won"
+      v-if="store.gameStatus == GameStatus.won"
     >
       Haga click para reiniciar la partida
     </button>
@@ -49,14 +52,6 @@ import { usePokemonGame } from '../composables/usePokemonGame'
 import PokemonPicture from '../components/PokemonPicture.vue'
 import PokemonOptions from '../components/PokemonOptions.vue'
 import { useWinnerStore } from '../store/pokemonStore'
-import { watch } from 'vue'
-const { pokemonsOptions, checkAnswer, resetGame } = usePokemonGame()
-
+const { checkAnswer } = usePokemonGame()
 const store = useWinnerStore()
-const winner = store.winner
-const gameStatus = store.gameStatus
-
-watch(winner, (newX) => {
-  console.log(`x is ${newX}`)
-})
 </script>

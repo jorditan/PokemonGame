@@ -6,11 +6,9 @@ import { usePokemonGame } from '../composables/usePokemonGame'
 export const useWinnerStore = defineStore('winner', {
   state: () => ({
     gameStatus: ref<GameStatus>(GameStatus.loading),
-    winner: ref<Pokemon>({
-      id: -1,
-      name: 'Desconocido',
-    }),
+    winner: ref<Pokemon | null>(null),
     limitPokemons: ref<number>(0),
+    pokemonsOptions: ref<Pokemon[]>([]),
   }),
   getters: {
     getStatus(state) {
@@ -28,34 +26,35 @@ export const useWinnerStore = defineStore('winner', {
       try {
         const { setNextOptions, getNextOptions } = usePokemonGame()
         await setNextOptions()
-        const pokemonsOptions = getNextOptions()
-        this.winner =
-          pokemonsOptions.value[Math.floor(Math.random() * pokemonsOptions.value.length)]
-        console.log(pokemonsOptions)
-        console.log(this.winner)
+        this.pokemonsOptions = getNextOptions()
+        this.winner = this.pokemonsOptions[Math.floor(Math.random() * this.pokemonsOptions.length)]
+        this.gameStatus = GameStatus.playing
       } catch (error) {
         return error
       }
     },
     startGame(aStatus: GameStatus) {
+      this.setWinner()
       this.gameStatus = aStatus
     },
     async restartGame() {
       try {
-        const { setNextOptions } = usePokemonGame()
+        const { setNextOptions, getNextOptions } = usePokemonGame()
         await setNextOptions()
         this.gameStatus = GameStatus.loading
+        this.pokemonsOptions = getNextOptions()
+        this.winner = this.pokemonsOptions[Math.floor(Math.random() * this.pokemonsOptions.length)]
+        this.gameStatus = GameStatus.playing
       } catch (error) {
         return error
       }
     },
-    setLimit() {
-      const { dificult } = usePokemonGame()
-      if (dificult.value == Dificulty.easy) {
+    setLimit(dificult: Dificulty) {
+      if (dificult == Dificulty.easy) {
         this.limitPokemons = 151
-      } else if (dificult.value == Dificulty.medium) {
+      } else if (dificult == Dificulty.medium) {
         this.limitPokemons = 201
-      } else if (dificult.value == Dificulty.hard) {
+      } else if (dificult == Dificulty.hard) {
         this.limitPokemons = 301
       }
     },
