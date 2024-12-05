@@ -26,11 +26,12 @@
         ]"
         type="button"
         severity="info"
-        @click="dificult !== 'Por definir' && handleVisible(), startGame()"
+        @click="dificult !== 'Por definir' && handleVisible(), setWinner()"
         class="p-2 rounded-lg mt-2"
       >
         Confirmar
       </button>
+      <button v-on:click="setNextOptions()">hola</button>
     </div>
   </Dialog>
 </template>
@@ -41,8 +42,9 @@ import Dialog from 'primevue/dialog'
 import { ref } from 'vue'
 import type { Dificulty } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
-
-const { dificult, setDificult, startGame } = usePokemonGame()
+import { useWinnerStore } from '../store/pokemonStore'
+const { setWinner } = useWinnerStore()
+const { dificult, setDificult, setNextOptions } = usePokemonGame()
 const visible = ref(true)
 
 const handleVisible = () => {
