@@ -4,7 +4,7 @@
   </section>
 
   <section
-    v-if="isLoading || winner.id == null"
+    v-if="gameStatus == GameStatus.loading || winner.id == null"
     class="flex flex-col justify-center items-center w-screen h-screen"
   >
     <h1 class="text-3xl">Espere por favor</h1>
@@ -46,12 +46,17 @@ h1 {
 import MyModal from '../components/MyModal.vue'
 import { Dificulty, GameStatus } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
-const { gameStatus, isLoading, winner, pokemonsOptions, checkAnswer, resetGame } = usePokemonGame()
-import PokemonOptions from '../components/PokemonOptions.vue'
 import PokemonPicture from '../components/PokemonPicture.vue'
+import PokemonOptions from '../components/PokemonOptions.vue'
+import { useWinnerStore } from '../store/pokemonStore'
 import { watch } from 'vue'
+const { pokemonsOptions, checkAnswer, resetGame } = usePokemonGame()
 
-watch(isLoading, (newState) => {
-  console.log('Que el juego está cargando es:', newState)
+const store = useWinnerStore()
+const winner = store.winner
+const gameStatus = store.gameStatus
+
+watch(winner, (newX) => {
+  console.log(`x is ${newX}`)
 })
 </script>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { GameStatus, type Pokemon } from '../interfaces'
+import { Dificulty, GameStatus, type Pokemon } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
 
 export const useWinnerStore = defineStore('winner', {
@@ -10,6 +10,7 @@ export const useWinnerStore = defineStore('winner', {
       id: -1,
       name: 'Desconocido',
     }),
+    limitPokemons: ref<number>(0),
   }),
   getters: {
     getStatus(state) {
@@ -18,31 +19,45 @@ export const useWinnerStore = defineStore('winner', {
     getWiner(state) {
       return state.winner
     },
+    getLimit(state) {
+      return state.limitPokemons
+    },
   },
   actions: {
     async setWinner() {
       try {
-        const { pokemonsOptions } = usePokemonGame()
-        console.log(pokemonsOptions)
+        const { setNextOptions, getNextOptions } = usePokemonGame()
+        await setNextOptions()
+        const pokemonsOptions = getNextOptions()
         this.winner =
           pokemonsOptions.value[Math.floor(Math.random() * pokemonsOptions.value.length)]
+        console.log(pokemonsOptions)
+        console.log(this.winner)
       } catch (error) {
-        console.log(error)
         return error
       }
     },
     startGame(aStatus: GameStatus) {
       this.gameStatus = aStatus
     },
-    restartGame() {
-      this.gameStatus = GameStatus.loading
+    async restartGame() {
+      try {
+        const { setNextOptions } = usePokemonGame()
+        await setNextOptions()
+        this.gameStatus = GameStatus.loading
+      } catch (error) {
+        return error
+      }
+    },
+    setLimit() {
+      const { dificult } = usePokemonGame()
+      if (dificult.value == Dificulty.easy) {
+        this.limitPokemons = 151
+      } else if (dificult.value == Dificulty.medium) {
+        this.limitPokemons = 201
+      } else if (dificult.value == Dificulty.hard) {
+        this.limitPokemons = 301
+      }
     },
   },
 })
-
-// const start = async () => {
-//   gameStatus.value = GameStatus.playing
-//   await startGame()
-//   console.log('Estado: ', gameStatus.value)
-// }
-//return { gameStatus, winner, start }

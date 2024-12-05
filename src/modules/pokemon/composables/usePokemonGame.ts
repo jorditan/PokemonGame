@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { GameStatus, type Pokemon, type PokemonListResponse } from '../interfaces'
 import pokemonApi from '../api/pokemonApi'
 import confeti from 'canvas-confetti'
@@ -8,29 +8,19 @@ import { useWinnerStore } from '../store/pokemonStore'
 export const usePokemonGame = () => {
   const pokemons = ref<Pokemon[]>([])
   const pokemonsOptions = ref<Pokemon[]>([])
-  const limitPokemons = ref<number>(0)
+  //const limitPokemons = ref<number>(0)
   const dificult = ref<Dificulty>(Dificulty.unselected)
   const store = useWinnerStore()
 
-  const setDificult = async (dificulty: Dificulty = Dificulty.easy) => {
+  const setDificult = (dificulty: Dificulty = Dificulty.easy) => {
     dificult.value = dificulty
-    if (dificult.value == Dificulty.easy) {
-      limitPokemons.value = 151
-    } else if (dificult.value == Dificulty.medium) {
-      limitPokemons.value = 201
-    } else if (dificult.value == Dificulty.hard) {
-      limitPokemons.value = 301
-    }
+    store.setLimit()
   }
 
-  // const winner = computed(
-  //   () => pokemonsOptions.value[Math.floor(Math.random() * pokemonsOptions.value.length)],
-  // )
-
-  const isLoading = computed(() => pokemons.value.length == 0)
-
   const getPokemonsIds = async (): Promise<Pokemon[]> => {
-    const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons.value}`)
+    const limitPokemons = store.getLimit
+    const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons}`)
+    console.log(limitPokemons)
     const pokemonsArray = response.data.results.map((pokemon) => {
       const urlParts = pokemon.url.split('/')
       const id = urlParts.at(-2) ?? 0
@@ -85,10 +75,7 @@ export const usePokemonGame = () => {
 
   return {
     pokemons,
-    limitPokemons,
-    isLoading,
     pokemonsOptions,
-    //winner,
     dificult,
 
     // Methods

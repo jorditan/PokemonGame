@@ -31,7 +31,6 @@
       >
         Confirmar
       </button>
-      <button v-on:click="setNextOptions()">hola</button>
     </div>
   </Dialog>
 </template>
@@ -44,7 +43,7 @@ import type { Dificulty } from '../interfaces'
 import { usePokemonGame } from '../composables/usePokemonGame'
 import { useWinnerStore } from '../store/pokemonStore'
 const { setWinner } = useWinnerStore()
-const { dificult, setDificult, setNextOptions } = usePokemonGame()
+const { dificult, setDificult } = usePokemonGame()
 const visible = ref(true)
 
 const handleVisible = () => {
