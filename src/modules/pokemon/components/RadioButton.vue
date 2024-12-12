@@ -3,7 +3,7 @@
     <div @click="$emit('click', dificult, 'click')">
       <RadioButton :inputId="dificult" name="dificulty" :value="dificult" />
     </div>
-    <label for="easy">{{ dificult }}</label>
+    <label @click.stop for="easy">{{ dificult }}</label>
   </div>
 </template>
 
