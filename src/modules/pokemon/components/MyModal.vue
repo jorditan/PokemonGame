@@ -20,13 +20,13 @@
       <button
         :class="[
           {
-            enabled: dificult != 'Por definir',
-            disabled: dificult == 'Por definir',
+            enabled: dificult !== 'Por definir',
+            disabled: store.winner == null,
           },
         ]"
         type="button"
         severity="info"
-        @click="dificult !== 'Por definir' && handleVisible(), setWinner()"
+        @click="handleVisible(), setWinner()"
         class="p-2 rounded-lg mt-2"
       >
         Confirmar
@@ -45,6 +45,8 @@ import { useWinnerStore } from '../store/pokemonStore'
 const { setWinner } = useWinnerStore()
 const { dificult, setDificult } = usePokemonGame()
 const visible = ref(true)
+
+const store = useWinnerStore()
 
 const handleVisible = () => {
   visible.value = !visible.value

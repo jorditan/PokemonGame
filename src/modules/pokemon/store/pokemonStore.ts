@@ -33,9 +33,9 @@ export const useWinnerStore = defineStore('winner', {
         return error
       }
     },
-    startGame(aStatus: GameStatus) {
+    startGame() {
       this.setWinner()
-      this.gameStatus = aStatus
+      this.gameStatus = GameStatus.playing
     },
     async restartGame() {
       try {

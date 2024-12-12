@@ -7,8 +7,6 @@ import { useWinnerStore } from '../store/pokemonStore'
 
 export const usePokemonGame = () => {
   const pokemons = ref<Pokemon[]>([])
-  //const pokemonsOptions = ref<Pokemon[]>([])
-  //const limitPokemons = ref<number>(0)
   const dificult = ref<Dificulty>(Dificulty.unselected)
   const store = useWinnerStore()
 
@@ -20,7 +18,6 @@ export const usePokemonGame = () => {
   const getPokemonsIds = async (): Promise<Pokemon[]> => {
     const limitPokemons = store.getLimit
     const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons}`)
-    console.log(limitPokemons)
     const pokemonsArray = response.data.results.map((pokemon) => {
       const urlParts = pokemon.url.split('/')
       const id = urlParts.at(-2) ?? 0
@@ -45,7 +42,7 @@ export const usePokemonGame = () => {
       })
     } else {
       setTimeout(() => {
-        store.startGame(GameStatus.lost)
+        store.startGame()
       }, 500)
     }
     return hasWon
@@ -54,7 +51,6 @@ export const usePokemonGame = () => {
   const setNextOptions = async (howMany: number = 4) => {
     pokemons.value = await getPokemonsIds()
     store.pokemonsOptions = pokemons.value.slice(0, howMany)
-    console.log(store.pokemonsOptions)
     pokemons.value = pokemons.value.slice(howMany)
   }
 
