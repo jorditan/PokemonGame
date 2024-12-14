@@ -9,7 +9,9 @@ export const useWinnerStore = defineStore('winner', {
     winner: ref<Pokemon | null>(null),
     limitPokemons: ref<number>(0),
     pokemonsOptions: ref<Pokemon[]>([]),
+    totalWinners: ref<Pokemon[]>([]),
   }),
+
   getters: {
     getStatus(state) {
       return state.gameStatus
@@ -20,6 +22,9 @@ export const useWinnerStore = defineStore('winner', {
     getLimit(state) {
       return state.limitPokemons
     },
+    getTotalWinner(state) {
+      return state.totalWinners
+    },
   },
   actions: {
     async setWinner() {
@@ -27,11 +32,17 @@ export const useWinnerStore = defineStore('winner', {
         const { setNextOptions, getNextOptions } = usePokemonGame()
         await setNextOptions()
         this.pokemonsOptions = getNextOptions()
-        this.winner = this.pokemonsOptions[Math.floor(Math.random() * this.pokemonsOptions.length)]
+        const pokemonesPosibles = this.pokemonsOptions.filter(
+          (pokemon) => !this.totalWinners.includes(pokemon),
+        )
+        this.winner = pokemonesPosibles[Math.floor(Math.random() * this.pokemonsOptions.length)]
         this.gameStatus = GameStatus.playing
       } catch (error) {
         return error
       }
+    },
+    addWinner(aWinner: Pokemon) {
+      this.totalWinners.push(aWinner)
     },
     startGame() {
       this.setWinner()

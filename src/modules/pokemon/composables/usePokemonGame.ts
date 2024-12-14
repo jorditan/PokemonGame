@@ -34,6 +34,7 @@ export const usePokemonGame = () => {
     const hasWon = winner!.id == id
     if (hasWon) {
       store.gameStatus = GameStatus.won
+      store.addWinner(winner!)
       confeti({
         particleCount: 400,
         spread: 150,
@@ -43,7 +44,7 @@ export const usePokemonGame = () => {
     } else {
       setTimeout(() => {
         store.startGame()
-      }, 500)
+      }, 300)
     }
     return hasWon
   }
@@ -61,7 +62,6 @@ export const usePokemonGame = () => {
   const resetGame = async () => {
     pokemons.value = await getPokemonsIds()
     getNextOptions()
-    //gameStatus.value = GameStatus.playing
   }
 
   return {
