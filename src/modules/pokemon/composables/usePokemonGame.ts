@@ -19,8 +19,8 @@ export const usePokemonGame = () => {
     const limitPokemons = store.getLimit
     const response = await pokemonApi.get<PokemonListResponse>(`/?limit=${limitPokemons}`)
     const pokemonsArray = response.data.results.map((pokemon) => {
-      const urlParts = pokemon.url.split('/')
-      const id = urlParts.at(-2) ?? 0
+      const urlParts: string[] = pokemon.url.split('/')
+      const id = urlParts[urlParts.length - 2] || '0'
       return {
         name: pokemon.name.charAt(0).toLocaleUpperCase() + pokemon.name.slice(1),
         id: +id,

@@ -53,9 +53,9 @@ export const useWinnerStore = defineStore('winner', {
       if (dificult == Dificulty.easy) {
         this.limitPokemons = 151
       } else if (dificult == Dificulty.medium) {
-        this.limitPokemons = 201
+        this.limitPokemons = 350
       } else if (dificult == Dificulty.hard) {
-        this.limitPokemons = 301
+        this.limitPokemons = 550
       }
     },
   },

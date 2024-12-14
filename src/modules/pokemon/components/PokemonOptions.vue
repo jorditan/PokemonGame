@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-wrap justify-center px-10">
     <button
       v-for="{ name, id } in options"
       :key="id"

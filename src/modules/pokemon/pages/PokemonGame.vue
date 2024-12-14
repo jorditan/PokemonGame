@@ -12,7 +12,7 @@
   </section>
 
   <section v-else class="gap-10 flex flex-col justify-center items-center w-screen h-screen">
-    <h1 class="text-5xl font-bold text-slate-800">¿Quién es este pokemon?</h1>
+    <h1 class="text-5xl font-bold text-slate-800 text-center">¿Quién es este pokemon?</h1>
     <h3 class="capitalize text-2xl font-bold">{{ store.gameStatus }}</h3>
     <PokemonPicture
       :poekmon-id="store.winner!.id"
